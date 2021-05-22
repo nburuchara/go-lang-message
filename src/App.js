@@ -2,6 +2,7 @@ import React,{Component} from 'react'
 import logo from './logo.svg';
 import './App.css';
 import styled from 'styled-components'
+import Checkbox from '@material-ui/core/Checkbox'
 
 const Styles = styled.div `
 
@@ -25,7 +26,7 @@ const Styles = styled.div `
 
 .loading {
   text-align: center;
-  margin-top: 10%;
+  margin-top: 15%;
 }
 
 .loading img {
@@ -137,6 +138,10 @@ const Styles = styled.div `
   font-family: Kanit;
 }
 
+.newRoom label {
+  font-family: Kanit;
+  color: #42C7FC;
+}
   // - - JOIN ROOM - - //
 
 .joinRoom {
@@ -200,6 +205,108 @@ const Styles = styled.div `
   border: 2px solid transparent;
 }
 
+  // - - BACK TO ROOMS - - //
+
+.backRoom {
+  text-align: center;
+}
+
+.backRoom button {
+  margin-top: 25px;
+  height: 45px;
+  width: 100px;
+  background-color: #42C7FC;
+  color: white;
+  outline: none;
+  border-radius: 8px;
+  border: 2px solid transparent;
+}
+
+  // - - PRIVATE ROOMS - - // 
+
+
+.private {
+  text-align: center;
+  margin-top: 19%;
+}
+
+.private input {
+  height: 42px;
+  width: 250px;
+  outline: none;
+  border-radius: 8px;
+  border: 0.2px solid black;
+  margin-bottom: 30px;
+  padding: 7px;
+  text-align: center;
+}
+
+.private input:placeholder {
+  text-align: center;
+}
+
+.private button {
+  height: 45px;
+  width: 90px;
+  background-color: #42C7FC;
+  color: white;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  outline: none;
+  margin-bottom: 30px;
+}
+
+  // - - CREATE PRIVATE ROOM - - //
+
+.createPrivateRoom {
+  text-align: center;
+  margin-top: 19%;
+}
+
+.createPrivateRoom input {
+  height: 42px;
+  width: 300px;
+  outline: none;
+  border-radius: 8px;
+  border: 0.2px solid black;
+  margin-bottom: 30px;
+  padding: 7px;
+  text-align: center;
+}
+
+.createPrivateRoom input:placeholder {
+  text-align: center;
+}
+
+.createPrivateRoom button {
+  height: 45px;
+  width: 90px;
+  background-color: #42C7FC;
+  color: white;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  outline: none;
+}
+
+  // - - JOIN CREATE - - //
+
+.joinCreate {
+  text-align: center;
+  margin-top: 19%;
+}
+
+.joinCreate button {
+  height: 45px;
+  width: 90px;
+  background-color: #42C7FC;
+  color: white;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  outline: none;
+  margin-bottom: 35px;
+}
+
+
 
 `
 
@@ -214,11 +321,15 @@ class App extends Component {
       newRoom: false,
       createdRoom : "",
       loadingScreen: false,
+      privateRoom: false,
       joinRoom: false,
       chatRoom: false,
       roomMessage : "",
       selectedRoom: "",
-      messageArray: []
+      messageArray: [],
+      newMeetingDemo: "",
+      checkbox: false,
+      privateRoomName: ""
     }
   }
 
@@ -249,11 +360,19 @@ class App extends Component {
   }
 
   createRoom = () => {
-    this.setState({loadingScreen: true, newRoom: false}, () => {
+    if (this.state.checkbox == true) {
+      this.setState({loadingScreen: true, newRoom: false, privateRoomName: this.state.createdRoom, createdRoom: ""}, () => {
+        setTimeout(() => {
+            this.setState({loadingScreen: false, createPrivateRoom: true})
+        }, 3000)
+      })
+    } else {
+      this.setState({loadingScreen: true, newRoom: false}, () => {
         setTimeout(() => {
             this.setState({loadingScreen: false, joinRoom: true})
         }, 3000)
-    })
+      })
+    }
   }
 
   sendMessage = () => {
@@ -269,8 +388,78 @@ class App extends Component {
       setTimeout(() => {
           this.setState({loadingScreen: false, chatRoom: true})
       }, 3000)
-  })
+    })
   }
+
+  backToRooms = () => {
+    this.setState({loadingScreen: true, chatRoom: false, selectedRoom: this.state.createdRoom, createdRoom: "Meeting"}, () => {
+      setTimeout(() => {
+          this.setState({loadingScreen: false, joinRoom: true})
+      }, 3000)
+    })
+  }
+
+  backToMenu = () => {
+    this.setState({loadingScreen: true, joinRoom: false, newRoom: false, createPrivateRoom: false, joinOrCreate: false, privateRoom: false, selectedRoom: this.state.createdRoom}, () => {
+      setTimeout(() => {
+          this.setState({loadingScreen: false, chat: true})
+      }, 3000)
+    })
+  }
+
+  goToPrivate = () => {
+    this.setState({loadingScreen: true, privateRoom: false, checkbox: false , createPrivateRoom: false, selectedRoom: `Welcome to the ${this.state.privateRoomName} Private Room`}, () => {
+      setTimeout(() => {
+          this.setState({loadingScreen: false, chatRoom: true})
+      }, 3000)
+    })
+  }
+
+  openPrivateRoom = () => {
+    this.setState({loadingScreen: true, chat: false}, () => {
+      setTimeout(() => {
+          this.setState({loadingScreen: false, joinOrCreate: true})
+      }, 3000)
+    })
+  }
+
+  goToRooms = () => {
+    this.setState({loadingScreen: true, chat: false}, () => {
+      setTimeout(() => {
+          this.setState({loadingScreen: false, joinRoom: true})
+      }, 3000)
+    })
+  }
+
+  checkboxClicked = () => {
+    this.setState({
+      checkbox: true
+    })
+    console.log("switched checkbox state")
+  }
+
+  directPrivateRoom = () => {
+    this.setState({loadingScreen: true, joinOrCreate: false, privateRoomName: ""}, () => {
+      setTimeout(() => {
+          this.setState({loadingScreen: false, createPrivateRoom: true})
+      }, 3000)
+    })
+  }
+
+  privateCreateRoom = () => {
+    this.setState({loadingScreen: true, joinOrCreate: false, privateRoomName:""}, () => {
+      setTimeout(() => {
+          this.setState({loadingScreen: false, privateRoom: true})
+      }, 3000)
+    })
+  }
+
+  backToHome = () => {
+    this.setState({
+      chat: false, home:true
+    })
+  }
+
 
   render () {
 
@@ -337,9 +526,15 @@ class App extends Component {
             <button
             onClick={this.goToNewRoom}
             ><b>New Room</b></button> <br/>
-            <button><b>Join Room</b></button> <br/>
-            <button><b>New Message</b></button> <br/>
-            <button><b>Quit</b></button> <br/>
+            <button
+            onClick={this.goToRooms}
+            ><b>Join Room</b></button> <br/>
+            <button
+            onClick={this.openPrivateRoom}
+            ><b>Private Room</b></button> <br/>
+            <button
+            onClick={this.backToHome}
+            ><b>Quit</b></button> <br/>
           </div>
         }
         {this.state.newRoom && 
@@ -354,6 +549,17 @@ class App extends Component {
             <button
             onClick={this.createRoom}
             >Create</button>
+            <br/>
+            <Checkbox
+              onClick={this.checkboxClicked}
+              value="checkedA"
+              inputProps={{ 'aria-label': 'Checkbox A' }}
+            /> <label>Private Room</label>
+            <br/>
+            <br/>
+            <button
+            onClick={this.backToMenu}
+            >Back</button>
           </div>
         }
         {this.state.joinRoom && 
@@ -362,7 +568,68 @@ class App extends Component {
             <button
             onClick={this.goToChatRoom}
             >{this.state.createdRoom}</button>
+            <br/><br/>
+            <button
+            onClick={this.backToMenu}
+            >Back</button>
           </div>
+        }
+        {this.state.privateRoom && 
+          <div className="private">
+            <input
+            id="privateRoomName"
+            onChange={this.handleChange}
+            value={this.state.privateRoomName}
+            placeholder="room name"
+            /> <br/>
+            <input
+            type="password"
+            placeholder="password"
+            />
+            <br/>
+            <button
+            onClick={this.goToPrivate}
+            >Join</button><br/>
+            <button
+            onClick={this.backToMenu}
+            >Back</button>
+          </div>
+        }
+        {this.state.joinOrCreate && 
+          <div className="joinCreate">
+            <button
+            onClick={this.privateCreateRoom}
+            >Join</button> <br/>
+            <button
+            onClick={this.directPrivateRoom}
+            >Create</button>
+            <br/><br/>
+            <button
+            onClick={this.backToMenu}
+            >Back</button>
+          </div>
+        }
+        {this.state.createPrivateRoom && 
+          <div className="createPrivateRoom">
+          <input
+          id="privateRoomName"
+          value={this.state.privateRoomName}
+          onChange={this.handleChange}
+          placeholder="create new private room name"
+          /> <br/>
+          <input
+          type="password"
+          placeholder="create new private room password"
+          />
+          <br/>
+          <button
+          onClick={this.goToPrivate}
+          >Create</button>
+          <br/>
+          <button
+          onClick={this.backToMenu}
+          >Back</button>
+        </div>
         }
         {this.state.chatRoom && 
           <div className="crHeader">
@@ -384,6 +651,11 @@ class App extends Component {
               <button
               onClick={this.sendMessage}
               >Send</button>
+            </div>
+            <div className="backRoom">
+              <button
+              onClick={this.backToRooms}
+              >Back</button>
             </div>
           </div>
         }
